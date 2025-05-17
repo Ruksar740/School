@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Carmel Public High School</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 1s ease;
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 26px;
+      color: #e17055;
+    }
+
+    .question {
+      margin-top: 30px;
+      font-size: 20px;
+      color: #2d3436;
+    }
+
+    .options button {
+      padding: 10px 25px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #6c5ce7;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    .options button:hover {
+      background-color: #4834d4;
+    }
+
+    .celebration {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .celebration h2 {
+      font-size: 24px;
+      color: #00b894;
+      margin-bottom: 20px;
+    }
+
+    .invitation-btn {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #0984e3;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="introScreen">
+  <h1>
+    <img src="school.png" alt="School" width="80"><br><br>
+    We, the management and staff of <strong>New Carmel Public High School</strong>, are delighted to inform you about the good news!<br><br>
+    Your support and coordination has helped us achieve this milestone — and we have a surprise for you.
+  </h1>
+
+  <div class="question">
+    Want to know what it is?
+  </div>
+
+  <div class="options">
+    <button onclick="showCelebration()">Yes</button>
+    <button onclick="showCelebration()">Yayyyy!</button>
+  </div>
+</div>
+
+<div class="container celebration" id="celebrationScreen">
+  <h2>🎉 We are happy to announce the inaugural ceremony of our new school wing! 🎊</h2>
+  <img src="fireworks.gif" alt="Celebration" width="150">
+  <button class="invitation-btn" onclick="alert('Your personalised invitation is on the way! 🎈')">
+    Click here to receive a personalised invitation
+  </button>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<script>
+  function showCelebration() {
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('celebrationScreen').style.display = 'flex';
+    startConfetti();
+  }
+
+  const canvas = document.getElementById("confettiCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let confettis = [];
+
+  for (let i = 0; i < 150; i++) {
+    confettis.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 10 + 5,
+      color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+      tilt: Math.random() * 10 - 5,
+      tiltAngleIncrement: Math.random() * 0.1,
+      tiltAngle: 0
+    });
+  }
+
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    confettis.forEach((c, i) => {
+      ctx.beginPath();
+      ctx.lineWidth = c.r;
+      ctx.strokeStyle = c.color;
+      ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.d / 2);
+      ctx.stroke();
+    });
+
+    updateConfetti();
+  }
+
+  function updateConfetti() {
+    confettis.forEach(c => {
+      c.tiltAngle += c.tiltAngleIncrement;
+      c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
+      c.x += Math.sin(c.d);
+      c.tilt = Math.sin(c.tiltAngle) * 15;
+
+      if (c.y > canvas.height) {
+        c.y = -10;
+        c.x = Math.random() * canvas.width;
+      }
+    });
+  }
+
+  function startConfetti() {
+    setInterval(drawConfetti, 30);
+  }
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
